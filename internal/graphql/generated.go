@@ -12,7 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/ncalibey/hackernews-go/internal/models"
+	"github.com/ncalibey/hackernews-go/internal/prisma"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
@@ -46,7 +46,7 @@ type ComplexityRoot struct {
 	Link struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
-		URL         func(childComplexity int) int
+		Url         func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -60,11 +60,11 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	Post(ctx context.Context, url string, description string) (*models.Link, error)
+	Post(ctx context.Context, url string, description string) (*prisma.Link, error)
 }
 type QueryResolver interface {
 	Info(ctx context.Context) (string, error)
-	Feed(ctx context.Context) ([]*models.Link, error)
+	Feed(ctx context.Context) ([]*prisma.Link, error)
 }
 
 type executableSchema struct {
@@ -97,11 +97,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Link.ID(childComplexity), true
 
 	case "Link.url":
-		if e.complexity.Link.URL == nil {
+		if e.complexity.Link.Url == nil {
 			break
 		}
 
-		return e.complexity.Link.URL(childComplexity), true
+		return e.complexity.Link.Url(childComplexity), true
 
 	case "Mutation.post":
 		if e.complexity.Mutation.Post == nil {
@@ -204,7 +204,7 @@ type Link {
 #### Resolvers ###################################
 type Query {
     info: String!
-    feed: [Link!]!
+    feed: [Link]!
 }
 
 type Mutation {
@@ -291,7 +291,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Link_id(ctx context.Context, field graphql.CollectedField, obj *models.Link) (ret graphql.Marshaler) {
+func (ec *executionContext) _Link_id(ctx context.Context, field graphql.CollectedField, obj *prisma.Link) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -328,7 +328,7 @@ func (ec *executionContext) _Link_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Link_description(ctx context.Context, field graphql.CollectedField, obj *models.Link) (ret graphql.Marshaler) {
+func (ec *executionContext) _Link_description(ctx context.Context, field graphql.CollectedField, obj *prisma.Link) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -365,7 +365,7 @@ func (ec *executionContext) _Link_description(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Link_url(ctx context.Context, field graphql.CollectedField, obj *models.Link) (ret graphql.Marshaler) {
+func (ec *executionContext) _Link_url(ctx context.Context, field graphql.CollectedField, obj *prisma.Link) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -384,7 +384,7 @@ func (ec *executionContext) _Link_url(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
+		return obj.Url, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -440,10 +440,10 @@ func (ec *executionContext) _Mutation_post(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Link)
+	res := resTmp.(*prisma.Link)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx, field.Selections, res)
+	return ec.marshalNLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_info(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -514,10 +514,10 @@ func (ec *executionContext) _Query_feed(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*models.Link)
+	res := resTmp.([]*prisma.Link)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx, field.Selections, res)
+	return ec.marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1756,7 +1756,7 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 var linkImplementors = []string{"Link"}
 
-func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *models.Link) graphql.Marshaler {
+func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *prisma.Link) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, linkImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2153,11 +2153,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNLink2githubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx context.Context, sel ast.SelectionSet, v models.Link) graphql.Marshaler {
+func (ec *executionContext) marshalNLink2githubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx context.Context, sel ast.SelectionSet, v prisma.Link) graphql.Marshaler {
 	return ec._Link(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx context.Context, sel ast.SelectionSet, v []*models.Link) graphql.Marshaler {
+func (ec *executionContext) marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx context.Context, sel ast.SelectionSet, v []*prisma.Link) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2181,7 +2181,7 @@ func (ec *executionContext) marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackern
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx, sel, v[i])
+			ret[i] = ec.marshalOLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2194,7 +2194,7 @@ func (ec *executionContext) marshalNLink2ᚕᚖgithubᚗcomᚋncalibeyᚋhackern
 	return ret
 }
 
-func (ec *executionContext) marshalNLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋmodelsᚐLink(ctx context.Context, sel ast.SelectionSet, v *models.Link) graphql.Marshaler {
+func (ec *executionContext) marshalNLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx context.Context, sel ast.SelectionSet, v *prisma.Link) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2465,6 +2465,17 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) marshalOLink2githubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx context.Context, sel ast.SelectionSet, v prisma.Link) graphql.Marshaler {
+	return ec._Link(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋncalibeyᚋhackernewsᚑgoᚋinternalᚋprismaᚐLink(ctx context.Context, sel ast.SelectionSet, v *prisma.Link) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Link(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

@@ -3,12 +3,12 @@
 # Refer to https://gqlgen.com/config/ for detailed .gqlgen.yml documentation.
 
 schema:
-- schema.graphql
+  - schema.graphql
 exec:
   filename: generated.go
-model:
-  filename: ../models/models_gen.go
-  package: models
+models:
+  Link:
+    model: github.com/ncalibey/hackernews-go/internal/prisma.Link
 resolver:
   filename: resolver.go
   type: Resolver

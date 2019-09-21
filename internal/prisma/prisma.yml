@@ -1,0 +1,11 @@
+endpoint: ""
+
+datamodel: datamodel.prisma
+
+generate:
+  - generator: go-client
+    output: ./
+
+hooks:
+  post-deploy:
+    - prisma generate
