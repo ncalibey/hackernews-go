@@ -9,6 +9,8 @@ exec:
 models:
   Link:
     model: github.com/ncalibey/hackernews-go/internal/prisma.Link
+  User:
+    model: github.com/ncalibey/hackernews-go/internal/prisma.User
 resolver:
   filename: resolver.go
   type: Resolver

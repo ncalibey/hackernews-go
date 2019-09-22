@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"github.com/prisma/prisma-client-lib-go"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -140,6 +141,85 @@ func (client *Client) LinksConnection(params *LinksConnectionParams) *LinkConnec
 	return &LinkConnectionExec{ret}
 }
 
+func (client *Client) User(params UserWhereUniqueInput) *UserExec {
+	ret := client.Client.GetOne(
+		nil,
+		params,
+		[2]string{"UserWhereUniqueInput!", "User"},
+		"user",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+type UsersParams struct {
+	Where   *UserWhereInput   `json:"where,omitempty"`
+	OrderBy *UserOrderByInput `json:"orderBy,omitempty"`
+	Skip    *int32            `json:"skip,omitempty"`
+	After   *string           `json:"after,omitempty"`
+	Before  *string           `json:"before,omitempty"`
+	First   *int32            `json:"first,omitempty"`
+	Last    *int32            `json:"last,omitempty"`
+}
+
+func (client *Client) Users(params *UsersParams) *UserExecArray {
+	var wparams *prisma.WhereParams
+	if params != nil {
+		wparams = &prisma.WhereParams{
+			Where:   params.Where,
+			OrderBy: (*string)(params.OrderBy),
+			Skip:    params.Skip,
+			After:   params.After,
+			Before:  params.Before,
+			First:   params.First,
+			Last:    params.Last,
+		}
+	}
+
+	ret := client.Client.GetMany(
+		nil,
+		wparams,
+		[3]string{"UserWhereInput", "UserOrderByInput", "User"},
+		"users",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExecArray{ret}
+}
+
+type UsersConnectionParams struct {
+	Where   *UserWhereInput   `json:"where,omitempty"`
+	OrderBy *UserOrderByInput `json:"orderBy,omitempty"`
+	Skip    *int32            `json:"skip,omitempty"`
+	After   *string           `json:"after,omitempty"`
+	Before  *string           `json:"before,omitempty"`
+	First   *int32            `json:"first,omitempty"`
+	Last    *int32            `json:"last,omitempty"`
+}
+
+func (client *Client) UsersConnection(params *UsersConnectionParams) *UserConnectionExec {
+	var wparams *prisma.WhereParams
+	if params != nil {
+		wparams = &prisma.WhereParams{
+			Where:   params.Where,
+			OrderBy: (*string)(params.OrderBy),
+			Skip:    params.Skip,
+			After:   params.After,
+			Before:  params.Before,
+			First:   params.First,
+			Last:    params.Last,
+		}
+	}
+
+	ret := client.Client.GetMany(
+		nil,
+		wparams,
+		[3]string{"UserWhereInput", "UserOrderByInput", "User"},
+		"usersConnection",
+		[]string{"edges", "pageInfo"})
+
+	return &UserConnectionExec{ret}
+}
+
 func (client *Client) CreateLink(params LinkCreateInput) *LinkExec {
 	ret := client.Client.Create(
 		params,
@@ -220,6 +300,86 @@ func (client *Client) DeleteManyLinks(params *LinkWhereInput) *BatchPayloadExec 
 	return &BatchPayloadExec{exec}
 }
 
+func (client *Client) CreateUser(params UserCreateInput) *UserExec {
+	ret := client.Client.Create(
+		params,
+		[2]string{"UserCreateInput!", "User"},
+		"createUser",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+type UserUpdateParams struct {
+	Data  UserUpdateInput      `json:"data"`
+	Where UserWhereUniqueInput `json:"where"`
+}
+
+func (client *Client) UpdateUser(params UserUpdateParams) *UserExec {
+	ret := client.Client.Update(
+		prisma.UpdateParams{
+			Data:  params.Data,
+			Where: params.Where,
+		},
+		[3]string{"UserUpdateInput!", "UserWhereUniqueInput!", "User"},
+		"updateUser",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+type UserUpdateManyParams struct {
+	Data  UserUpdateManyMutationInput `json:"data"`
+	Where *UserWhereInput             `json:"where,omitempty"`
+}
+
+func (client *Client) UpdateManyUsers(params UserUpdateManyParams) *BatchPayloadExec {
+	exec := client.Client.UpdateMany(
+		prisma.UpdateParams{
+			Data:  params.Data,
+			Where: params.Where,
+		},
+		[2]string{"UserUpdateManyMutationInput!", "UserWhereInput"},
+		"updateManyUsers")
+	return &BatchPayloadExec{exec}
+}
+
+type UserUpsertParams struct {
+	Where  UserWhereUniqueInput `json:"where"`
+	Create UserCreateInput      `json:"create"`
+	Update UserUpdateInput      `json:"update"`
+}
+
+func (client *Client) UpsertUser(params UserUpsertParams) *UserExec {
+	uparams := &prisma.UpsertParams{
+		Where:  params.Where,
+		Create: params.Create,
+		Update: params.Update,
+	}
+	ret := client.Client.Upsert(
+		uparams,
+		[4]string{"UserWhereUniqueInput!", "UserCreateInput!", "UserUpdateInput!", "User"},
+		"upsertUser",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+func (client *Client) DeleteUser(params UserWhereUniqueInput) *UserExec {
+	ret := client.Client.Delete(
+		params,
+		[2]string{"UserWhereUniqueInput!", "User"},
+		"deleteUser",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+func (client *Client) DeleteManyUsers(params *UserWhereInput) *BatchPayloadExec {
+	exec := client.Client.DeleteMany(params, "UserWhereInput", "deleteManyUsers")
+	return &BatchPayloadExec{exec}
+}
+
 type LinkOrderByInput string
 
 const (
@@ -231,6 +391,19 @@ const (
 	LinkOrderByInputDescriptionDesc LinkOrderByInput = "description_DESC"
 	LinkOrderByInputUrlAsc          LinkOrderByInput = "url_ASC"
 	LinkOrderByInputUrlDesc         LinkOrderByInput = "url_DESC"
+)
+
+type UserOrderByInput string
+
+const (
+	UserOrderByInputIDAsc        UserOrderByInput = "id_ASC"
+	UserOrderByInputIDDesc       UserOrderByInput = "id_DESC"
+	UserOrderByInputNameAsc      UserOrderByInput = "name_ASC"
+	UserOrderByInputNameDesc     UserOrderByInput = "name_DESC"
+	UserOrderByInputEmailAsc     UserOrderByInput = "email_ASC"
+	UserOrderByInputEmailDesc    UserOrderByInput = "email_DESC"
+	UserOrderByInputPasswordAsc  UserOrderByInput = "password_ASC"
+	UserOrderByInputPasswordDesc UserOrderByInput = "password_DESC"
 )
 
 type MutationType string
@@ -296,25 +469,256 @@ type LinkWhereInput struct {
 	UrlNotStartsWith         *string          `json:"url_not_starts_with,omitempty"`
 	UrlEndsWith              *string          `json:"url_ends_with,omitempty"`
 	UrlNotEndsWith           *string          `json:"url_not_ends_with,omitempty"`
+	PostedBy                 *UserWhereInput  `json:"postedBy,omitempty"`
 	And                      []LinkWhereInput `json:"AND,omitempty"`
 	Or                       []LinkWhereInput `json:"OR,omitempty"`
 	Not                      []LinkWhereInput `json:"NOT,omitempty"`
 }
 
+type UserWhereInput struct {
+	ID                    *string          `json:"id,omitempty"`
+	IDNot                 *string          `json:"id_not,omitempty"`
+	IDIn                  []string         `json:"id_in,omitempty"`
+	IDNotIn               []string         `json:"id_not_in,omitempty"`
+	IDLt                  *string          `json:"id_lt,omitempty"`
+	IDLte                 *string          `json:"id_lte,omitempty"`
+	IDGt                  *string          `json:"id_gt,omitempty"`
+	IDGte                 *string          `json:"id_gte,omitempty"`
+	IDContains            *string          `json:"id_contains,omitempty"`
+	IDNotContains         *string          `json:"id_not_contains,omitempty"`
+	IDStartsWith          *string          `json:"id_starts_with,omitempty"`
+	IDNotStartsWith       *string          `json:"id_not_starts_with,omitempty"`
+	IDEndsWith            *string          `json:"id_ends_with,omitempty"`
+	IDNotEndsWith         *string          `json:"id_not_ends_with,omitempty"`
+	Name                  *string          `json:"name,omitempty"`
+	NameNot               *string          `json:"name_not,omitempty"`
+	NameIn                []string         `json:"name_in,omitempty"`
+	NameNotIn             []string         `json:"name_not_in,omitempty"`
+	NameLt                *string          `json:"name_lt,omitempty"`
+	NameLte               *string          `json:"name_lte,omitempty"`
+	NameGt                *string          `json:"name_gt,omitempty"`
+	NameGte               *string          `json:"name_gte,omitempty"`
+	NameContains          *string          `json:"name_contains,omitempty"`
+	NameNotContains       *string          `json:"name_not_contains,omitempty"`
+	NameStartsWith        *string          `json:"name_starts_with,omitempty"`
+	NameNotStartsWith     *string          `json:"name_not_starts_with,omitempty"`
+	NameEndsWith          *string          `json:"name_ends_with,omitempty"`
+	NameNotEndsWith       *string          `json:"name_not_ends_with,omitempty"`
+	Email                 *string          `json:"email,omitempty"`
+	EmailNot              *string          `json:"email_not,omitempty"`
+	EmailIn               []string         `json:"email_in,omitempty"`
+	EmailNotIn            []string         `json:"email_not_in,omitempty"`
+	EmailLt               *string          `json:"email_lt,omitempty"`
+	EmailLte              *string          `json:"email_lte,omitempty"`
+	EmailGt               *string          `json:"email_gt,omitempty"`
+	EmailGte              *string          `json:"email_gte,omitempty"`
+	EmailContains         *string          `json:"email_contains,omitempty"`
+	EmailNotContains      *string          `json:"email_not_contains,omitempty"`
+	EmailStartsWith       *string          `json:"email_starts_with,omitempty"`
+	EmailNotStartsWith    *string          `json:"email_not_starts_with,omitempty"`
+	EmailEndsWith         *string          `json:"email_ends_with,omitempty"`
+	EmailNotEndsWith      *string          `json:"email_not_ends_with,omitempty"`
+	Password              *string          `json:"password,omitempty"`
+	PasswordNot           *string          `json:"password_not,omitempty"`
+	PasswordIn            []string         `json:"password_in,omitempty"`
+	PasswordNotIn         []string         `json:"password_not_in,omitempty"`
+	PasswordLt            *string          `json:"password_lt,omitempty"`
+	PasswordLte           *string          `json:"password_lte,omitempty"`
+	PasswordGt            *string          `json:"password_gt,omitempty"`
+	PasswordGte           *string          `json:"password_gte,omitempty"`
+	PasswordContains      *string          `json:"password_contains,omitempty"`
+	PasswordNotContains   *string          `json:"password_not_contains,omitempty"`
+	PasswordStartsWith    *string          `json:"password_starts_with,omitempty"`
+	PasswordNotStartsWith *string          `json:"password_not_starts_with,omitempty"`
+	PasswordEndsWith      *string          `json:"password_ends_with,omitempty"`
+	PasswordNotEndsWith   *string          `json:"password_not_ends_with,omitempty"`
+	LinksEvery            *LinkWhereInput  `json:"links_every,omitempty"`
+	LinksSome             *LinkWhereInput  `json:"links_some,omitempty"`
+	LinksNone             *LinkWhereInput  `json:"links_none,omitempty"`
+	And                   []UserWhereInput `json:"AND,omitempty"`
+	Or                    []UserWhereInput `json:"OR,omitempty"`
+	Not                   []UserWhereInput `json:"NOT,omitempty"`
+}
+
+type UserWhereUniqueInput struct {
+	ID    *string `json:"id,omitempty"`
+	Email *string `json:"email,omitempty"`
+}
+
 type LinkCreateInput struct {
-	ID          *string `json:"id,omitempty"`
-	Description string  `json:"description"`
-	Url         string  `json:"url"`
+	ID          *string                         `json:"id,omitempty"`
+	Description string                          `json:"description"`
+	Url         string                          `json:"url"`
+	PostedBy    *UserCreateOneWithoutLinksInput `json:"postedBy,omitempty"`
+}
+
+type UserCreateOneWithoutLinksInput struct {
+	Create  *UserCreateWithoutLinksInput `json:"create,omitempty"`
+	Connect *UserWhereUniqueInput        `json:"connect,omitempty"`
+}
+
+type UserCreateWithoutLinksInput struct {
+	ID       *string `json:"id,omitempty"`
+	Name     string  `json:"name"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
 }
 
 type LinkUpdateInput struct {
-	Description *string `json:"description,omitempty"`
-	Url         *string `json:"url,omitempty"`
+	Description *string                         `json:"description,omitempty"`
+	Url         *string                         `json:"url,omitempty"`
+	PostedBy    *UserUpdateOneWithoutLinksInput `json:"postedBy,omitempty"`
+}
+
+type UserUpdateOneWithoutLinksInput struct {
+	Create     *UserCreateWithoutLinksInput     `json:"create,omitempty"`
+	Update     *UserUpdateWithoutLinksDataInput `json:"update,omitempty"`
+	Upsert     *UserUpsertWithoutLinksInput     `json:"upsert,omitempty"`
+	Delete     *bool                            `json:"delete,omitempty"`
+	Disconnect *bool                            `json:"disconnect,omitempty"`
+	Connect    *UserWhereUniqueInput            `json:"connect,omitempty"`
+}
+
+type UserUpdateWithoutLinksDataInput struct {
+	Name     *string `json:"name,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Password *string `json:"password,omitempty"`
+}
+
+type UserUpsertWithoutLinksInput struct {
+	Update UserUpdateWithoutLinksDataInput `json:"update"`
+	Create UserCreateWithoutLinksInput     `json:"create"`
 }
 
 type LinkUpdateManyMutationInput struct {
 	Description *string `json:"description,omitempty"`
 	Url         *string `json:"url,omitempty"`
+}
+
+type UserCreateInput struct {
+	ID       *string                             `json:"id,omitempty"`
+	Name     string                              `json:"name"`
+	Email    string                              `json:"email"`
+	Password string                              `json:"password"`
+	Links    *LinkCreateManyWithoutPostedByInput `json:"links,omitempty"`
+}
+
+type LinkCreateManyWithoutPostedByInput struct {
+	Create  []LinkCreateWithoutPostedByInput `json:"create,omitempty"`
+	Connect []LinkWhereUniqueInput           `json:"connect,omitempty"`
+}
+
+type LinkCreateWithoutPostedByInput struct {
+	ID          *string `json:"id,omitempty"`
+	Description string  `json:"description"`
+	Url         string  `json:"url"`
+}
+
+type UserUpdateInput struct {
+	Name     *string                             `json:"name,omitempty"`
+	Email    *string                             `json:"email,omitempty"`
+	Password *string                             `json:"password,omitempty"`
+	Links    *LinkUpdateManyWithoutPostedByInput `json:"links,omitempty"`
+}
+
+type LinkUpdateManyWithoutPostedByInput struct {
+	Create     []LinkCreateWithoutPostedByInput                `json:"create,omitempty"`
+	Delete     []LinkWhereUniqueInput                          `json:"delete,omitempty"`
+	Connect    []LinkWhereUniqueInput                          `json:"connect,omitempty"`
+	Set        []LinkWhereUniqueInput                          `json:"set,omitempty"`
+	Disconnect []LinkWhereUniqueInput                          `json:"disconnect,omitempty"`
+	Update     []LinkUpdateWithWhereUniqueWithoutPostedByInput `json:"update,omitempty"`
+	Upsert     []LinkUpsertWithWhereUniqueWithoutPostedByInput `json:"upsert,omitempty"`
+	DeleteMany []LinkScalarWhereInput                          `json:"deleteMany,omitempty"`
+	UpdateMany []LinkUpdateManyWithWhereNestedInput            `json:"updateMany,omitempty"`
+}
+
+type LinkUpdateWithWhereUniqueWithoutPostedByInput struct {
+	Where LinkWhereUniqueInput               `json:"where"`
+	Data  LinkUpdateWithoutPostedByDataInput `json:"data"`
+}
+
+type LinkUpdateWithoutPostedByDataInput struct {
+	Description *string `json:"description,omitempty"`
+	Url         *string `json:"url,omitempty"`
+}
+
+type LinkUpsertWithWhereUniqueWithoutPostedByInput struct {
+	Where  LinkWhereUniqueInput               `json:"where"`
+	Update LinkUpdateWithoutPostedByDataInput `json:"update"`
+	Create LinkCreateWithoutPostedByInput     `json:"create"`
+}
+
+type LinkScalarWhereInput struct {
+	ID                       *string                `json:"id,omitempty"`
+	IDNot                    *string                `json:"id_not,omitempty"`
+	IDIn                     []string               `json:"id_in,omitempty"`
+	IDNotIn                  []string               `json:"id_not_in,omitempty"`
+	IDLt                     *string                `json:"id_lt,omitempty"`
+	IDLte                    *string                `json:"id_lte,omitempty"`
+	IDGt                     *string                `json:"id_gt,omitempty"`
+	IDGte                    *string                `json:"id_gte,omitempty"`
+	IDContains               *string                `json:"id_contains,omitempty"`
+	IDNotContains            *string                `json:"id_not_contains,omitempty"`
+	IDStartsWith             *string                `json:"id_starts_with,omitempty"`
+	IDNotStartsWith          *string                `json:"id_not_starts_with,omitempty"`
+	IDEndsWith               *string                `json:"id_ends_with,omitempty"`
+	IDNotEndsWith            *string                `json:"id_not_ends_with,omitempty"`
+	CreatedAt                *string                `json:"createdAt,omitempty"`
+	CreatedAtNot             *string                `json:"createdAt_not,omitempty"`
+	CreatedAtIn              []string               `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn           []string               `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt              *string                `json:"createdAt_lt,omitempty"`
+	CreatedAtLte             *string                `json:"createdAt_lte,omitempty"`
+	CreatedAtGt              *string                `json:"createdAt_gt,omitempty"`
+	CreatedAtGte             *string                `json:"createdAt_gte,omitempty"`
+	Description              *string                `json:"description,omitempty"`
+	DescriptionNot           *string                `json:"description_not,omitempty"`
+	DescriptionIn            []string               `json:"description_in,omitempty"`
+	DescriptionNotIn         []string               `json:"description_not_in,omitempty"`
+	DescriptionLt            *string                `json:"description_lt,omitempty"`
+	DescriptionLte           *string                `json:"description_lte,omitempty"`
+	DescriptionGt            *string                `json:"description_gt,omitempty"`
+	DescriptionGte           *string                `json:"description_gte,omitempty"`
+	DescriptionContains      *string                `json:"description_contains,omitempty"`
+	DescriptionNotContains   *string                `json:"description_not_contains,omitempty"`
+	DescriptionStartsWith    *string                `json:"description_starts_with,omitempty"`
+	DescriptionNotStartsWith *string                `json:"description_not_starts_with,omitempty"`
+	DescriptionEndsWith      *string                `json:"description_ends_with,omitempty"`
+	DescriptionNotEndsWith   *string                `json:"description_not_ends_with,omitempty"`
+	Url                      *string                `json:"url,omitempty"`
+	UrlNot                   *string                `json:"url_not,omitempty"`
+	UrlIn                    []string               `json:"url_in,omitempty"`
+	UrlNotIn                 []string               `json:"url_not_in,omitempty"`
+	UrlLt                    *string                `json:"url_lt,omitempty"`
+	UrlLte                   *string                `json:"url_lte,omitempty"`
+	UrlGt                    *string                `json:"url_gt,omitempty"`
+	UrlGte                   *string                `json:"url_gte,omitempty"`
+	UrlContains              *string                `json:"url_contains,omitempty"`
+	UrlNotContains           *string                `json:"url_not_contains,omitempty"`
+	UrlStartsWith            *string                `json:"url_starts_with,omitempty"`
+	UrlNotStartsWith         *string                `json:"url_not_starts_with,omitempty"`
+	UrlEndsWith              *string                `json:"url_ends_with,omitempty"`
+	UrlNotEndsWith           *string                `json:"url_not_ends_with,omitempty"`
+	And                      []LinkScalarWhereInput `json:"AND,omitempty"`
+	Or                       []LinkScalarWhereInput `json:"OR,omitempty"`
+	Not                      []LinkScalarWhereInput `json:"NOT,omitempty"`
+}
+
+type LinkUpdateManyWithWhereNestedInput struct {
+	Where LinkScalarWhereInput    `json:"where"`
+	Data  LinkUpdateManyDataInput `json:"data"`
+}
+
+type LinkUpdateManyDataInput struct {
+	Description *string `json:"description,omitempty"`
+	Url         *string `json:"url,omitempty"`
+}
+
+type UserUpdateManyMutationInput struct {
+	Name     *string `json:"name,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Password *string `json:"password,omitempty"`
 }
 
 type LinkSubscriptionWhereInput struct {
@@ -328,8 +732,30 @@ type LinkSubscriptionWhereInput struct {
 	Not                        []LinkSubscriptionWhereInput `json:"NOT,omitempty"`
 }
 
+type UserSubscriptionWhereInput struct {
+	MutationIn                 []MutationType               `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                      `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                     `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                     `json:"updatedFields_contains_some,omitempty"`
+	Node                       *UserWhereInput              `json:"node,omitempty"`
+	And                        []UserSubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []UserSubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []UserSubscriptionWhereInput `json:"NOT,omitempty"`
+}
+
 type LinkExec struct {
 	exec *prisma.Exec
+}
+
+func (instance *LinkExec) PostedBy() *UserExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "User"},
+		"postedBy",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
 }
 
 func (instance LinkExec) Exec(ctx context.Context) (*Link, error) {
@@ -363,6 +789,77 @@ type Link struct {
 	CreatedAt   string `json:"createdAt"`
 	Description string `json:"description"`
 	Url         string `json:"url"`
+}
+
+type UserExec struct {
+	exec *prisma.Exec
+}
+
+type LinksParamsExec struct {
+	Where   *LinkWhereInput
+	OrderBy *LinkOrderByInput
+	Skip    *int32
+	After   *string
+	Before  *string
+	First   *int32
+	Last    *int32
+}
+
+func (instance *UserExec) Links(params *LinksParamsExec) *LinkExecArray {
+	var wparams *prisma.WhereParams
+	if params != nil {
+		wparams = &prisma.WhereParams{
+			Where:   params.Where,
+			OrderBy: (*string)(params.OrderBy),
+			Skip:    params.Skip,
+			After:   params.After,
+			Before:  params.Before,
+			First:   params.First,
+			Last:    params.Last,
+		}
+	}
+
+	ret := instance.exec.Client.GetMany(
+		instance.exec,
+		wparams,
+		[3]string{"LinkWhereInput", "LinkOrderByInput", "Link"},
+		"links",
+		[]string{"id", "createdAt", "description", "url"})
+
+	return &LinkExecArray{ret}
+}
+
+func (instance UserExec) Exec(ctx context.Context) (*User, error) {
+	var v User
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UserExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UserExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UserExecArray) Exec(ctx context.Context) ([]User, error) {
+	var v []User
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type User struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type LinkConnectionExec struct {
@@ -525,6 +1022,129 @@ type LinkEdge struct {
 	Cursor string `json:"cursor"`
 }
 
+type UserConnectionExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *UserConnectionExec) PageInfo() *PageInfoExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "PageInfo"},
+		"pageInfo",
+		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
+
+	return &PageInfoExec{ret}
+}
+
+func (instance *UserConnectionExec) Edges() *UserEdgeExecArray {
+	edges := instance.exec.Client.GetMany(
+		instance.exec,
+		nil,
+		[3]string{"UserWhereInput", "UserOrderByInput", "UserEdge"},
+		"edges",
+		[]string{"cursor"})
+
+	nodes := edges.Client.GetMany(
+		edges,
+		nil,
+		[3]string{"", "", "User"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "name", "desc"})
+
+	return &UserEdgeExecArray{nodes}
+}
+
+func (instance *UserConnectionExec) Aggregate(ctx context.Context) (*Aggregate, error) {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "AggregateUser"},
+		"aggregate",
+		[]string{"count"})
+
+	var v Aggregate
+	_, err := ret.Exec(ctx, &v)
+	return &v, err
+}
+
+func (instance UserConnectionExec) Exec(ctx context.Context) (*UserConnection, error) {
+	var v UserConnection
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UserConnectionExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UserConnectionExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UserConnectionExecArray) Exec(ctx context.Context) ([]UserConnection, error) {
+	var v []UserConnection
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type UserConnection struct {
+	PageInfo PageInfo   `json:"pageInfo"`
+	Edges    []UserEdge `json:"edges"`
+}
+
+type UserEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *UserEdgeExec) Node() *UserExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "User"},
+		"node",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+func (instance UserEdgeExec) Exec(ctx context.Context) (*UserEdge, error) {
+	var v UserEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UserEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UserEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UserEdgeExecArray) Exec(ctx context.Context) ([]UserEdge, error) {
+	var v []UserEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type UserEdge struct {
+	Node   User   `json:"node"`
+	Cursor string `json:"cursor"`
+}
+
 type LinkSubscriptionPayloadExec struct {
 	exec *prisma.Exec
 }
@@ -618,4 +1238,99 @@ type LinkPreviousValues struct {
 	CreatedAt   string `json:"createdAt"`
 	Description string `json:"description"`
 	Url         string `json:"url"`
+}
+
+type UserSubscriptionPayloadExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *UserSubscriptionPayloadExec) Node() *UserExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "User"},
+		"node",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserExec{ret}
+}
+
+func (instance *UserSubscriptionPayloadExec) PreviousValues() *UserPreviousValuesExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "UserPreviousValues"},
+		"previousValues",
+		[]string{"id", "name", "email", "password"})
+
+	return &UserPreviousValuesExec{ret}
+}
+
+func (instance UserSubscriptionPayloadExec) Exec(ctx context.Context) (*UserSubscriptionPayload, error) {
+	var v UserSubscriptionPayload
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UserSubscriptionPayloadExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UserSubscriptionPayloadExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UserSubscriptionPayloadExecArray) Exec(ctx context.Context) ([]UserSubscriptionPayload, error) {
+	var v []UserSubscriptionPayload
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type UserSubscriptionPayload struct {
+	Mutation      MutationType `json:"mutation"`
+	Node          *User        `json:"node,omitempty"`
+	UpdatedFields []string     `json:"updatedFields,omitempty"`
+}
+
+type UserPreviousValuesExec struct {
+	exec *prisma.Exec
+}
+
+func (instance UserPreviousValuesExec) Exec(ctx context.Context) (*UserPreviousValues, error) {
+	var v UserPreviousValues
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UserPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UserPreviousValuesExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UserPreviousValuesExecArray) Exec(ctx context.Context) ([]UserPreviousValues, error) {
+	var v []UserPreviousValues
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type UserPreviousValues struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
